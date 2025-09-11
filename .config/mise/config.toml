@@ -1,0 +1,8 @@
+[tools]
+node = "18"
+python = ["3.11", "3.10", "3.9", "3.8"]
+"npm:aws-cdk" = "2.66.0"
+"npm:aws-cdk-lib" = "2.66.0"
+
+[settings]
+experimental = true
