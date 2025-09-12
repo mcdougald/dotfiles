@@ -1,0 +1,98 @@
+{
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "aws.telemetry": false,
+  "docwriter.progress.trackTypes": true,
+  "docwriter.style": "JSDoc",
+  "editor.accessibilitySupport": "off",
+  "eslint.debug": true,
+  "eslint.format.enable": true,
+  "eslint.lintTask.enable": true,
+  "eslint.nodePath": "/opt/homebrew/bin/node",
+  "files.autoSave": "afterDelay",
+  "javascript.format.insertSpaceAfterConstructor": true,
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": true,
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true,
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": true,
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": true,
+  "javascript.format.semicolons": "insert",
+  "javascript.inlayHints.functionLikeReturnTypes.enabled": true,
+  "javascript.inlayHints.parameterTypes.enabled": true,
+  "javascript.inlayHints.variableTypes.enabled": true,
+  "javascript.preferences.jsxAttributeCompletionStyle": "braces",
+  "javascript.preferences.quoteStyle": "single",
+  "javascript.referencesCodeLens.enabled": true,
+  "mdx.experimentalLanguageServer": true,
+  "merge-conflict.autoNavigateNextConflict.enabled": true,
+  "npm.enableRunFromFolder": true,
+  "nxConsole.showNodeVersionOnStartup": false,
+  "pieces.setCopilotLocation": true,
+  "serverlessConsole.searchByLogStreams": true,
+  "sonarlint.rules": {
+    "typescript:S1192": {
+      "level": "on"
+    },
+    "typescript:S122": {
+      "level": "on"
+    },
+    "typescript:S1438": {
+      "level": "on"
+    },
+    "typescript:S1440": {
+      "level": "on"
+    },
+    "typescript:S1535": {
+      "level": "on"
+    },
+    "typescript:S1874": {
+      "level": "off"
+    },
+    "typescript:S3499": {
+      "level": "on"
+    },
+    "typescript:S3513": {
+      "level": "on"
+    },
+    "typescript:S3533": {
+      "level": "on"
+    },
+    "typescript:S4326": {
+      "level": "on"
+    },
+    "typescript:S909": {
+      "level": "on"
+    }
+  },
+  "terminal.explorerKind": "external",
+  "terminal.external.linuxExec": "iTerm",
+  "terminal.external.osxExec": "iTerm.app",
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": true,
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": true,
+  "typescript.format.insertSpaceAfterTypeAssertion": true,
+  "typescript.format.semicolons": "insert",
+  "typescript.implementationsCodeLens.enabled": true,
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+  "typescript.inlayHints.parameterTypes.enabled": true,
+  "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
+  "typescript.inlayHints.variableTypes.enabled": true,
+  "typescript.preferGoToSourceDefinition": true,
+  "typescript.preferences.jsxAttributeCompletionStyle": "braces",
+  "typescript.preferences.quoteStyle": "single",
+  "typescript.referencesCodeLens.enabled": true,
+  "typescript.suggest.completeFunctionCalls": true,
+    "workbench.colorCustomizations": {
+      "activityBar.background": "#407069",
+      "titleBar.activeBackground": "#39605a",
+      "titleBar.activeForeground": "#F6FBFB"
+    },
+  "workbench.colorTheme": "Dark One",
+  "workbench.iconTheme": "vscode-icons",
+  "terminal.integrated.env.osx": {
+    "CW_NEW_SESSION": "1"
+  },
+    "pieces.OS.launchOnStartup": "Yes",
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "redhat.telemetry.enabled": false,
+  "windowColors.🌈 Theme": "light"
+}
