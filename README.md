@@ -1,12 +1,23 @@
 # Trevor McDougald's Dotfiles
 
+[![macOS](https://img.shields.io/badge/macOS-Darwin-blue.svg)](https://www.apple.com/macos/)
+[![Zsh](https://img.shields.io/badge/Shell-Zsh-89e051.svg)](https://www.zsh.org/)
+[![iTerm2](https://img.shields.io/badge/Terminal-iTerm2-000000.svg)](https://iterm2.com/)
+[![Cursor](https://img.shields.io/badge/Editor-Cursor-000000.svg)](https://cursor.sh/)
+[![IntelliJ](https://img.shields.io/badge/IDE-IntelliJ%20IDEA-000000.svg)](https://www.jetbrains.com/idea/)
+[![Homebrew](https://img.shields.io/badge/Package%20Manager-Homebrew-2e8a57.svg)](https://brew.sh/)
+[![Git](https://img.shields.io/badge/Version%20Control-Git-f05032.svg)](https://git-scm.com/)
+[![VS Code](https://img.shields.io/badge/Editor-VS%20Code-007ACC.svg)](https://code.visualstudio.com/)
+
+**Tags:** `zsh` `zshrc` `iterm2` `cursor` `vscode` `intellij` `jetbrains` `themes` `color-schemes` `macos` `homebrew` `dotfiles` `config` `development` `terminal` `shell` `ide` `editor`
+
 A curated collection of development configuration files, themes, and setup scripts for macOS development environments.
 
 ## 📞 Contact
 
 - **GitHub**: [@mcdougald](https://github.com/trevormcdougald)
 - **Email**: mcdougald.job@gmail.com
-- **Website**: trev.fyi
+- **Website**: [trev.fyi](https://trev.fyi)
 
 ## 📋 Overview
 
