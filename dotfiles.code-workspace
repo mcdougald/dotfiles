@@ -1,0 +1,65 @@
+{
+	"folders": [
+		{
+			"name": "dotfiles",
+			"path": "."
+		},
+		{
+			"name": "Home Configs",
+			"path": "/Users/trevormcdougald"
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/node_modules": true,
+			"**/.git": true,
+			"**/.DS_Store": true,
+			"**/Thumbs.db": true,
+			"**/Library": true,
+			"**/Applications": true,
+			"**/System": true,
+			"**/Downloads": true,
+			"**/Desktop": true,
+			"**/Documents": true,
+			"**/Pictures": true,
+			"**/Movies": true,
+			"**/Music": true,
+			"**/Public": true,
+			"**/opt": true,
+			"**/usr": true,
+			"**/var": true,
+			"**/tmp": true,
+			"**/bin": true,
+			"**/sbin": true,
+			"**/etc": true,
+			"**/dev": true,
+			"**/proc": true,
+			"**/sys": true
+		},
+		"files.associations": {
+			".zshrc": "shellscript",
+			".bashrc": "shellscript",
+			".bash_profile": "shellscript",
+			".profile": "shellscript",
+			".vimrc": "viml",
+			".gitconfig": "ini",
+			".gitignore": "ignore",
+			".gitattributes": "gitattributes"
+		},
+		"search.exclude": {
+			"**/node_modules": true,
+			"**/.git": true,
+			"**/Library": true,
+			"**/Applications": true,
+			"**/System": true,
+			"**/Users/*/Library": true,
+			"**/Users/*/Applications": true,
+			"**/Users/*/Downloads": true,
+			"**/Users/*/Desktop": true,
+			"**/Users/*/Documents": true,
+			"**/Users/*/Pictures": true,
+			"**/Users/*/Movies": true,
+			"**/Users/*/Music": true
+		}
+	}
+}
