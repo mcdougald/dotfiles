@@ -10,6 +10,7 @@
 		}
 	],
 	"settings": {
+		"terminal.integrated.fontFamily": "MesloLGS NF",
 		"files.exclude": {
 			"**/node_modules": true,
 			"**/.git": true,
@@ -34,7 +35,8 @@
 			"**/etc": true,
 			"**/dev": true,
 			"**/proc": true,
-			"**/sys": true
+			"**/sys": true,
+			"**/workspace": true
 		},
 		"files.associations": {
 			".zshrc": "shellscript",
@@ -59,7 +61,8 @@
 			"**/Users/*/Documents": true,
 			"**/Users/*/Pictures": true,
 			"**/Users/*/Movies": true,
-			"**/Users/*/Music": true
+			"**/Users/*/Music": true,
+			"**/workspace": true
 		}
 	}
 }

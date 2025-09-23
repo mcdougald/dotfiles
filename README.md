@@ -31,6 +31,12 @@ This repository contains my personal dotfiles and development configurations, or
 - **Shell**: Zsh with Homebrew package manager
 - **Version Control**: Git
 
+## 🖥️ Terminal Preview
+
+![Terminal Screenshot](assets/terminal-screenshot.png)
+
+*My terminal setup featuring the DoomOne theme with Powerlevel10k prompt*
+
 ## 🎨 Available Themes
 
 ### Terminal Themes
@@ -45,9 +51,13 @@ This repository contains my personal dotfiles and development configurations, or
 ## 📁 Repository Structure
 
 ```
+├── assets/              # Screenshots and images
+│   └── terminal-screenshot.png
 ├── themes/
 │   ├── iterm/           # iTerm2 color schemes
 │   └── *.icls           # IntelliJ IDEA color schemes
+├── Brewfile             # Homebrew package list
+├── dotfiles.code-workspace  # VS Code workspace configuration
 └── README.md            # This file
 ```
 
