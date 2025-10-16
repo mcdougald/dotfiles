@@ -38,16 +38,16 @@ brew "ruby"
 brew "php"
 
 # Package managers
-brew "npm"
+# brew "npm" - Manage with Mise 
 brew "yarn"
-brew "pnpm"
+# brew "pnpm" - Manage with Mise
 brew "pipenv"
 brew "poetry"
 brew "cargo"
 brew "gem"
 
 # Version managers
-brew "nvm"
+# brew "nvm" - Use Mise
 brew "pyenv"
 brew "rbenv"
 brew "gvm"
@@ -205,7 +205,6 @@ cask "slack"
 cask "discord"
 cask "zoom"
 cask "figma"
-cask "sketch"
 
 # System utilities
 cask "cleanmymac"
