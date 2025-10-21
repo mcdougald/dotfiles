@@ -1,4 +1,4 @@
-# Trevor McDougald's Dotfiles
+# Trev McDougald's Dotfiles
 
 [![macOS](https://img.shields.io/badge/macOS-Darwin-blue.svg)](https://www.apple.com/macos/)
 [![Zsh](https://img.shields.io/badge/Shell-Zsh-89e051.svg)](https://www.zsh.org/)
