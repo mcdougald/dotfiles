@@ -299,15 +299,15 @@ defaults write NSGlobalDomain NSWindowResizeTime -float 0.01
 ################################################################################
 echo "🔒 Configuring Security & Privacy..."
 
-# Require password immediately after sleep or screen saver begins
-defaults write com.apple.screensaver askForPassword -int 1
-defaults write com.apple.screensaver askForPasswordDelay -int 0
-
-# Enable firewall
-sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on 2>/dev/null || true
-
-# Enable firewall stealth mode (don't respond to ICMP ping requests or connection attempts)
-sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setstealthmode on 2>/dev/null || true
+## Require password immediately after sleep or screen saver begins
+#defaults write com.apple.screensaver askForPassword -int 1
+#defaults write com.apple.screensaver askForPasswordDelay -int 0
+#
+## Enable firewall
+#sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on 2>/dev/null || true
+#
+## Enable firewall stealth mode (don't respond to ICMP ping requests or connection attempts)
+#sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setstealthmode on 2>/dev/null || true
 
 ################################################################################
 # TERMINAL & SHELL
@@ -318,17 +318,64 @@ echo "🖥️  Configuring Terminal..."
 # Disable the line marks in Terminal.app
 defaults write com.apple.Terminal ShowLineMarks -int 0
 
-################################################################################
-# CLEANUP & COMPLETION
-################################################################################
-echo ""
-echo "✅ macOS defaults configured successfully!"
-echo ""
-echo "⚠️  Some changes require a restart to take effect:"
-echo "   - Log out and log back in"
-echo "   - Or restart your Mac"
-echo ""
-echo "To apply Finder and Dock changes immediately, run:"
-echo "   killall Finder"
-echo "   killall Dock"
-echo ""
+
+# --- Additional dev-friendly defaults ---
+
+echo "🔧 Extras: Finder metadata visibility"
+# Absolute dates in Finder list view (not relative like 'Today')
+defaults write com.apple.finder FXRelativeDate -bool false
+# Calculate folder sizes in list view
+defaults write com.apple.finder CalculateAllSizes -bool true
+# Show item info near icons (Desktop and Finder)
+defaults write com.apple.finder ShowItemInfo -bool true
+/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:showItemInfo true" "$HOME/Library/Preferences/com.apple.finder.plist" 2>/dev/null || true
+/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:showItemInfo true" "$HOME/Library/Preferences/com.apple.finder.plist" 2>/dev/null || true
+# Expand key panes in 'Get Info'
+defaults write com.apple.finder FXInfoPanesExpanded -dict General -bool true OpenWith -bool true Privileges -bool true
+# New Finder windows open to Home
+defaults write com.apple.finder NewWindowTarget -string "PfHm"
+defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}/"
+# Hide 'Recent Tags'
+defaults write com.apple.finder ShowRecentTags -bool false
+# Enable text selection in Quick Look
+defaults write com.apple.finder QLEnableTextSelection -bool true
+# Show /Volumes in Finder
+sudo chflags nohidden /Volumes 2>/dev/null || true
+
+echo "🧭 Extras: Dock layout"
+# Dock on the right, faster 'scale' minimize, hide recent apps, dim hidden apps
+defaults write com.apple.dock orientation -string "right"
+defaults write com.apple.dock mineffect -string "scale"
+defaults write com.apple.dock show-recents -bool false
+defaults write com.apple.dock showhidden -bool true
+
+echo "🔋 Extras: Power (no sleep on power adapter)"
+# Never sleep when charging; keep display and disk awake; disable Power Nap
+sudo pmset -c sleep 0
+sudo pmset -c displaysleep 0
+sudo pmset -c disksleep 0
+sudo pmset -c powernap 0
+# Optional: also disable Power Nap on battery
+sudo pmset -b powernap 0
+
+echo "⌨️  Extras: Keyboard & scrolling"
+# Fast key repeat everywhere (disable press-and-hold for accents)
+defaults write -g ApplePressAndHoldEnabled -bool false
+# Always show scrollbars; jump to the clicked location
+defaults write -g AppleShowScrollBars -string "Always"
+defaults write -g AppleScrollerPagingBehavior -int 1
+
+echo "📸 Extras: Screenshots & menu bar"
+# Disable floating thumbnail after screenshots
+defaults write com.apple.screencapture "show-thumbnail" -bool false
+# Show battery percentage in Control Center menu bar
+defaults write com.apple.controlcenter "BatteryShowPercentage" -bool true
+# Show seconds in the clock and always show date
+defaults write com.apple.menuextra.clock ShowSeconds -bool true
+defaults write com.apple.menuextra.clock ShowDate -int 2
+
+echo "🧩 Extras: Accessibility/performance"
+# Reduce transparency for snappier UI
+defaults write com.apple.universalaccess reduceTransparency -bool true
+
+echo "ℹ️  To apply: killall Finder; killall Dock; killall SystemUIServer"
