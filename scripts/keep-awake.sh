@@ -35,37 +35,75 @@ get_idle_time() {
     fi
 }
 
-# Function to simulate user activity
-# Uses AppleScript to move mouse cursor by 1 pixel (imperceptible)
-# This prevents macOS from detecting idle time and going to sleep
+# Function to simulate user activity using multiple methods
+# Keyboard events are more reliable than mouse movement for preventing sleep
 simulate_activity() {
-    # Use osascript to move mouse cursor slightly
-    # This is the most reliable method that works without special permissions
+    # Method 1: Use Python with PyObjC for reliable keyboard simulation (if available)
+    if command -v python3 &> /dev/null; then
+        python3 <<'PYTHON' 2>/dev/null
+try:
+    from Quartz import CGEvent, kCGHIDEventTap
+    from Quartz.CoreGraphics import CGEventCreateKeyboardEvent, CGEventPost, kCGEventKeyDown, kCGEventKeyUp
+    import time
+
+    # Create a harmless key event (F15 - typically doesn't exist on most keyboards)
+    # This won't interfere with user's work
+    event_down = CGEventCreateKeyboardEvent(None, 0x6F, True)  # F15 key down
+    event_up = CGEventCreateKeyboardEvent(None, 0x6F, False)    # F15 key up
+
+    if event_down and event_up:
+        CGEventPost(kCGHIDEventTap, event_down)
+        time.sleep(0.01)
+        CGEventPost(kCGHIDEventTap, event_up)
+        exit(0)
+except:
+    exit(1)
+PYTHON
+        if [ $? -eq 0 ]; then
+            return 0
+        fi
+    fi
+
+    # Method 2: Use AppleScript to simulate keyboard event
+    # Use F15 (key code 111) which typically doesn't exist on keyboards - completely harmless
+    # If that fails, try other function keys
     osascript <<'APPLESCRIPT' 2>/dev/null
 tell application "System Events"
     try
-        -- Method 1: Try to get and move mouse position
-        -- Note: This may require Accessibility permissions on first run
-        set mouseLoc to mouse location
-        set x to item 1 of mouseLoc
-        set y to item 2 of mouseLoc
-
-        -- Move mouse 1 pixel right and back (imperceptible)
-        set mouse location to {x + 1, y}
-        delay 0.01
-        set mouse location to {x, y}
+        -- F15 key (key code 111) - typically doesn't exist, completely harmless
+        key code 111
     on error
-        -- Method 2: Fallback - simulate a harmless modifier key press
-        -- This won't interfere with user's work but resets idle timer
         try
-            key code 63 using {shift down, control down}
+            -- Fallback: F14 (key code 110)
+            key code 110
         on error
-            -- Method 3: Last resort - just trigger a system event
-            do shell script "echo ''"
+            try
+                -- Fallback: F13 (key code 109)
+                key code 109
+            on error
+                try
+                    -- Fallback: Use media next track key (key code 144) - harmless
+                    key code 144
+                on error
+                    -- Last resort: simulate a harmless modifier combination
+                    key code 48 using {shift down, control down}
+                end try
+            end try
         end try
     end try
 end tell
 APPLESCRIPT
+
+    # Method 3: File I/O to create system activity
+    # This helps reset some activity timers
+    touch /tmp/.keep-awake-$$ 2>/dev/null || true
+    echo "$(date)" >> /tmp/.keep-awake-$$ 2>/dev/null || true
+    rm -f /tmp/.keep-awake-$$ 2>/dev/null || true
+
+    # Method 4: Trigger ioreg activity (resets some system timers)
+    ioreg -w 0 -c IOHIDSystem >/dev/null 2>&1 || true
+
+    return 0
 }
 
 # Function to display usage
@@ -73,10 +111,11 @@ usage() {
     cat << EOF
 Usage: $0 [duration] [options]
 
-Prevents macOS from going to sleep by simulating user activity (mouse movement).
-Only moves the mouse if the system has been idle for a set amount of time,
+Prevents macOS from going to sleep by simulating user activity (keyboard events).
+Only simulates activity if the system has been idle for a set amount of time,
 preventing interruptions while you're actively working.
 
+Uses pmset noidle if available, otherwise falls back to keyboard event simulation.
 Works even when caffeinate and other sleep-prevention apps are blocked.
 
 Arguments:
@@ -173,9 +212,44 @@ if ! command -v osascript &> /dev/null; then
     exit 1
 fi
 
-# Note about Accessibility permissions
-echo -e "${BLUE}Note: This script uses mouse movement simulation to prevent sleep.${NC}"
-echo -e "${BLUE}macOS may prompt for Accessibility permissions on first run.${NC}"
+# Try to use pmset noidle first (different from caffeinate, might not be blocked)
+# This is the most reliable method if available
+USE_PMSET=false
+PMSET_PID=""
+if command -v pmset &> /dev/null; then
+    # Test if pmset noidle works
+    if pmset noidle &>/dev/null 2>&1; then
+        USE_PMSET=true
+        echo -e "${BLUE}Using pmset noidle (most reliable method)...${NC}"
+    fi
+fi
+
+# If pmset works, use it for indefinite duration
+if [ "$USE_PMSET" = true ] && [ -z "$TOTAL_SECONDS" ]; then
+    echo -e "${GREEN}Keeping Mac awake indefinitely using pmset...${NC}"
+    echo -e "${YELLOW}Press Ctrl+C to stop.${NC}"
+    trap 'kill $PMSET_PID 2>/dev/null; echo -e "\n${GREEN}Stopped. Mac will now sleep normally.${NC}"; exit 0' INT TERM
+    pmset noidle &
+    PMSET_PID=$!
+    wait $PMSET_PID
+    exit 0
+fi
+
+# If pmset works with duration, use it with timeout
+if [ "$USE_PMSET" = true ] && [ -n "$TOTAL_SECONDS" ]; then
+    echo -e "${GREEN}Keeping Mac awake for ${TOTAL_SECONDS} seconds using pmset...${NC}"
+    trap 'kill $PMSET_PID 2>/dev/null; echo -e "\n${GREEN}Stopped. Mac will now sleep normally.${NC}"; exit 0' INT TERM
+    (pmset noidle &)
+    PMSET_PID=$!
+    sleep "$TOTAL_SECONDS"
+    kill $PMSET_PID 2>/dev/null || true
+    echo -e "${GREEN}Duration complete. Mac will now sleep normally.${NC}"
+    exit 0
+fi
+
+# Fall back to keyboard simulation method
+echo -e "${BLUE}Using keyboard event simulation to prevent sleep...${NC}"
+echo -e "${BLUE}Note: macOS may prompt for Accessibility permissions on first run.${NC}"
 echo ""
 
 # Convert idle threshold to human-readable format
@@ -201,17 +275,40 @@ if [ -n "$TOTAL_SECONDS" ]; then
         echo -e "${GREEN}Keeping Mac awake for ${MINUTES} minute(s)...${NC}"
     fi
     echo -e "${BLUE}Check interval: ${INTERVAL} seconds${NC}"
-    echo -e "${BLUE}Idle threshold: ${IDLE_DISPLAY} (mouse moves only if idle this long)${NC}"
+    echo -e "${BLUE}Idle threshold: ${IDLE_DISPLAY} (simulates activity only if idle this long)${NC}"
     echo -e "${YELLOW}Press Ctrl+C to stop early.${NC}"
 else
     echo -e "${GREEN}Keeping Mac awake indefinitely...${NC}"
     echo -e "${BLUE}Check interval: ${INTERVAL} seconds${NC}"
-    echo -e "${BLUE}Idle threshold: ${IDLE_DISPLAY} (mouse moves only if idle this long)${NC}"
+    echo -e "${BLUE}Idle threshold: ${IDLE_DISPLAY} (simulates activity only if idle this long)${NC}"
     echo -e "${YELLOW}Press Ctrl+C to stop and allow sleep again.${NC}"
 fi
 
+# Function to cleanup background processes
+cleanup() {
+    # Kill any background processes
+    if [ -n "$BG_PID" ]; then
+        kill $BG_PID 2>/dev/null || true
+        wait $BG_PID 2>/dev/null || true
+    fi
+    # Clean up temp files
+    rm -f /tmp/.keep-awake-bg-$$ 2>/dev/null || true
+}
+
 # Trap Ctrl+C to exit gracefully
-trap 'echo -e "\n${GREEN}Stopped. Mac will now sleep normally.${NC}"; exit 0' INT TERM
+trap 'cleanup; echo -e "\n${GREEN}Stopped. Mac will now sleep normally.${NC}"; exit 0' INT TERM
+
+# Start a background process that does minimal activity to help prevent sleep
+# This runs continuously and does very light file I/O every few seconds
+(
+    while true; do
+        # Minimal activity: touch a file and read system info
+        touch /tmp/.keep-awake-bg-$$ 2>/dev/null || true
+        iostat -n 0 >/dev/null 2>&1 || sysctl vm.swapusage >/dev/null 2>&1 || true
+        sleep 10
+    done
+) &
+BG_PID=$!
 
 # Main loop
 START_TIME=$(date +%s)
@@ -224,6 +321,7 @@ while true; do
         ELAPSED=$((CURRENT_TIME - START_TIME))
 
         if [ $ELAPSED -ge $TOTAL_SECONDS ]; then
+            cleanup
             echo -e "${GREEN}Duration complete. Mac will now sleep normally.${NC}"
             exit 0
         fi
@@ -246,17 +344,17 @@ while true; do
 
     # Only simulate activity if system has been idle for the threshold duration
     if [ "$IDLE_TIME" -ge "$IDLE_THRESHOLD" ]; then
-        # System is idle, move mouse to prevent sleep
+        # System is idle, simulate keyboard activity to prevent sleep
         simulate_activity >/dev/null 2>&1
 
-        # Optional: Log when we move the mouse (every 10th time to avoid spam)
+        # Optional: Log when we simulate activity (every 10th time to avoid spam)
         if [ $((ITERATION % 10)) -eq 0 ]; then
             IDLE_MIN=$((IDLE_TIME / 60))
             IDLE_SEC=$((IDLE_TIME % 60))
             if [ $IDLE_MIN -gt 0 ]; then
-                echo -e "${BLUE}[Idle: ${IDLE_MIN}m ${IDLE_SEC}s] Moved mouse to prevent sleep${NC}"
+                echo -e "${BLUE}[Idle: ${IDLE_MIN}m ${IDLE_SEC}s] Simulated activity to prevent sleep${NC}"
             else
-                echo -e "${BLUE}[Idle: ${IDLE_SEC}s] Moved mouse to prevent sleep${NC}"
+                echo -e "${BLUE}[Idle: ${IDLE_SEC}s] Simulated activity to prevent sleep${NC}"
             fi
         fi
     fi
