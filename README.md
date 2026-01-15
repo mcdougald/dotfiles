@@ -37,6 +37,12 @@ This repository contains my personal dotfiles and development configurations, or
 
 *My terminal setup featuring the DoomOne theme with Powerlevel10k prompt*
 
+## Inspirations
+
+- [mswell](https://github.com/mswell/dotfiles/blob/master/config/zsh/.zshrc)
+- [narze](https://github.com/narze/dotfiles/blob/master/chezmoi/symlink_laptop.tmpl)
+- [mark-hubers](https://github.com/mark-hubers/hubers-devtools-system/blob/main/terminal-config/home/.zsh/markdown-toolkit.zsh)
+
 ## 🎨 Available Themes
 
 ### Terminal Themes
