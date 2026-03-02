@@ -13,6 +13,9 @@ BREW_BIN="/home/linuxbrew/.linuxbrew/bin/brew"
 BREW_SHELLENV='eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
 ZPROFILE="${HOME}/.zprofile"
 ZSHRC="${HOME}/.zshrc"
+OH_MY_ZSH_DIR="${HOME}/.oh-my-zsh"
+OH_MY_ZSH_CUSTOM="${ZSH_CUSTOM:-${OH_MY_ZSH_DIR}/custom}"
+MODE="${1:-full}"
 
 APT_BASE_PACKAGES=(
   build-essential
@@ -32,7 +35,9 @@ APT_DEV_PACKAGES=(
   apt-transport-https
   bat
   btop
+  command-not-found
   fd-find
+  fontconfig
   fzf
   jq
   neovim
@@ -82,6 +87,26 @@ BREW_PACKAGES=(
   yq
   zoxide
   zstd
+)
+
+BREW_TERMINAL_PACKAGES=(
+  atuin
+  bat
+  direnv
+  dust
+  eza
+  fd
+  fzf
+  gh
+  git-delta
+  jq
+  lazygit
+  neovim
+  ripgrep
+  starship
+  tmux
+  yq
+  zoxide
 )
 
 log() {
@@ -162,12 +187,14 @@ configure_shell_for_brew() {
 }
 
 install_brew_packages() {
+  local package
+  local packages=("$@")
+
   log "Updating Homebrew"
   brew update
 
   log "Installing brew packages"
-  local package
-  for package in "${BREW_PACKAGES[@]}"; do
+  for package in "${packages[@]}"; do
     if brew list --formula "$package" >/dev/null 2>&1; then
       continue
     fi
@@ -225,6 +252,95 @@ setup_modern_runtime_defaults() {
   fi
 }
 
+set_default_shell_to_zsh() {
+  local zsh_path
+  zsh_path="$(command -v zsh || true)"
+  if [[ -z "$zsh_path" ]]; then
+    warn "zsh not found; cannot set default shell."
+    return
+  fi
+
+  if [[ "$SHELL" == "$zsh_path" ]]; then
+    return
+  fi
+
+  if ! grep -Fqx "$zsh_path" /etc/shells; then
+    echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
+  fi
+
+  if chsh -s "$zsh_path" "$USER"; then
+    log "Default shell set to zsh"
+  else
+    warn "Failed to change default shell to zsh. You can run: chsh -s $zsh_path"
+  fi
+}
+
+install_oh_my_zsh() {
+  if [[ -d "$OH_MY_ZSH_DIR" ]]; then
+    log "Oh My Zsh already installed"
+    return
+  fi
+
+  log "Installing Oh My Zsh"
+  RUNZSH=no CHSH=no KEEP_ZSHRC=yes \
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+}
+
+clone_or_update_git_repo() {
+  local repo_url="$1"
+  local target_dir="$2"
+
+  if [[ -d "$target_dir/.git" ]]; then
+    git -C "$target_dir" pull --ff-only >/dev/null 2>&1 || true
+    return
+  fi
+
+  git clone --depth=1 "$repo_url" "$target_dir"
+}
+
+install_powerlevel10k_and_plugins() {
+  mkdir -p "${OH_MY_ZSH_CUSTOM}/themes" "${OH_MY_ZSH_CUSTOM}/plugins"
+
+  log "Installing Powerlevel10k theme and zsh plugins"
+  clone_or_update_git_repo "https://github.com/romkatv/powerlevel10k.git" \
+    "${OH_MY_ZSH_CUSTOM}/themes/powerlevel10k"
+  clone_or_update_git_repo "https://github.com/zsh-users/zsh-autosuggestions" \
+    "${OH_MY_ZSH_CUSTOM}/plugins/zsh-autosuggestions"
+  clone_or_update_git_repo "https://github.com/zsh-users/zsh-syntax-highlighting.git" \
+    "${OH_MY_ZSH_CUSTOM}/plugins/zsh-syntax-highlighting"
+  clone_or_update_git_repo "https://github.com/zsh-users/zsh-completions" \
+    "${OH_MY_ZSH_CUSTOM}/plugins/zsh-completions"
+}
+
+install_meslo_nerd_fonts() {
+  local fonts_dir="${HOME}/.local/share/fonts"
+  local marker="${fonts_dir}/MesloLGS NF Regular.ttf"
+
+  if [[ -f "$marker" ]]; then
+    return
+  fi
+
+  mkdir -p "$fonts_dir"
+  log "Installing Meslo Nerd Fonts for Powerlevel10k"
+
+  local base_url="https://github.com/romkatv/powerlevel10k-media/raw/master"
+  curl -fsSL "${base_url}/MesloLGS%20NF%20Regular.ttf" -o "${fonts_dir}/MesloLGS NF Regular.ttf"
+  curl -fsSL "${base_url}/MesloLGS%20NF%20Bold.ttf" -o "${fonts_dir}/MesloLGS NF Bold.ttf"
+  curl -fsSL "${base_url}/MesloLGS%20NF%20Italic.ttf" -o "${fonts_dir}/MesloLGS NF Italic.ttf"
+  curl -fsSL "${base_url}/MesloLGS%20NF%20Bold%20Italic.ttf" -o "${fonts_dir}/MesloLGS NF Bold Italic.ttf"
+
+  if command -v fc-cache >/dev/null 2>&1; then
+    fc-cache -f "${fonts_dir}" >/dev/null 2>&1 || true
+  fi
+}
+
+setup_terminal_experience() {
+  install_oh_my_zsh
+  install_powerlevel10k_and_plugins
+  install_meslo_nerd_fonts
+  set_default_shell_to_zsh
+}
+
 print_next_steps() {
   cat <<'EOF'
 
@@ -232,14 +348,17 @@ Setup complete.
 
 Recommended next steps:
   1) Restart your shell: exec zsh
-  2) If docker group was updated, log out/in once
-  3) Configure runtimes with mise, for example:
+  2) In your terminal app, set font to "MesloLGS NF" for best Powerlevel10k rendering
+  3) If this is your first p10k run, configure prompt:
+       p10k configure
+  4) If docker group was updated, log out/in once
+  5) Configure runtimes with mise, for example:
        mise use -g node@lts
        mise use -g python@3.13
        mise use -g go@stable
-  4) Enable corepack-managed package managers:
+  6) Enable corepack-managed package managers:
        corepack enable
-  5) Verify:
+  7) Verify:
        brew doctor
        docker --version
        kubectl version --client
@@ -253,8 +372,15 @@ main() {
   install_apt_prereqs
   install_linuxbrew
   configure_shell_for_brew
-  install_brew_packages
-  install_docker_engine
+
+  if [[ "$MODE" == "--terminal-only" || "$MODE" == "terminal" ]]; then
+    install_brew_packages "${BREW_TERMINAL_PACKAGES[@]}"
+  else
+    install_brew_packages "${BREW_PACKAGES[@]}"
+    install_docker_engine
+  fi
+
+  setup_terminal_experience
   setup_modern_runtime_defaults
   print_next_steps
 }

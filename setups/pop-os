@@ -17,13 +17,14 @@ TARGET_ZSHRC="${HOME}/.zshrc"
 usage() {
   cat <<'EOF'
 Usage:
-  ./setups/pop-os [all|setup|zshrc|help]
+  ./setups/pop-os [all|setup|terminal|zshrc|help]
 
 Commands:
-  all     Run Pop!_OS setup and apply .zshrc-ubuntu (default)
-  setup   Run Pop!_OS setup only
-  zshrc   Apply .zshrc-ubuntu to ~/.zshrc only
-  help    Show this help
+  all       Run full Pop!_OS setup and apply .zshrc-ubuntu (default)
+  setup     Run full Pop!_OS setup only
+  terminal  Install terminal UX stack (p10k/zsh plugins/fonts) and apply zshrc
+  zshrc     Apply .zshrc-ubuntu to ~/.zshrc only
+  help      Show this help
 EOF
 }
 
@@ -46,21 +47,30 @@ apply_pop_os_zshrc() {
 }
 
 run_setup() {
+  local mode="${1:-full}"
   if [[ ! -x "$SETUP_SCRIPT" ]]; then
     chmod +x "$SETUP_SCRIPT"
   fi
-  "$SETUP_SCRIPT"
+  if [[ "$mode" == "terminal" ]]; then
+    "$SETUP_SCRIPT" --terminal-only
+  else
+    "$SETUP_SCRIPT"
+  fi
 }
 
 main() {
   local cmd="${1:-all}"
   case "$cmd" in
     all)
-      run_setup
+      run_setup full
       apply_pop_os_zshrc
       ;;
     setup)
-      run_setup
+      run_setup full
+      ;;
+    terminal)
+      run_setup terminal
+      apply_pop_os_zshrc
       ;;
     zshrc)
       apply_pop_os_zshrc

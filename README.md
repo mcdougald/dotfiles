@@ -99,10 +99,14 @@ This default `all` mode will:
 
 - Run the full Pop!_OS machine setup via `setups/setup_pop_os_2026.sh`
 - Apply `./.zshrc-ubuntu` to `~/.zshrc` (with automatic backup)
+- Install enhanced terminal UX stack: Oh My Zsh + Powerlevel10k + Meslo Nerd Font + plugin suite
 
 Optional modes:
 
 ```bash
+# terminal-only fast path (recommended for shell UX upgrades)
+./setups/pop-os terminal
+
 # setup only (packages/dev tooling)
 ./setups/pop-os setup
 
@@ -116,6 +120,8 @@ Optional modes:
 After running setup:
 
 - Restart shell: `exec zsh`
+- Set your terminal font to `MesloLGS NF` for Powerlevel10k glyphs
+- Run first-time prompt wizard: `p10k configure`
 - If added to docker group, log out/in once
 - Verify key tools: `brew doctor && docker --version && gh --version`
 
