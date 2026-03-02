@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+#
+# setups/pop-os
+#
+# Single entrypoint for Pop!_OS bootstrap tasks:
+# - Run full machine setup
+# - Apply Pop!_OS zshrc template
+#
+
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SETUP_SCRIPT="${ROOT_DIR}/setups/setup_pop_os_2026.sh"
+SOURCE_ZSHRC="${ROOT_DIR}/.zshrc-ubuntu"
+TARGET_ZSHRC="${HOME}/.zshrc"
+
+usage() {
+  cat <<'EOF'
+Usage:
+  ./setups/pop-os [all|setup|zshrc|help]
+
+Commands:
+  all     Run Pop!_OS setup and apply .zshrc-ubuntu (default)
+  setup   Run Pop!_OS setup only
+  zshrc   Apply .zshrc-ubuntu to ~/.zshrc only
+  help    Show this help
+EOF
+}
+
+apply_pop_os_zshrc() {
+  if [[ ! -f "$SOURCE_ZSHRC" ]]; then
+    echo "Missing template: $SOURCE_ZSHRC" >&2
+    exit 1
+  fi
+
+  if [[ -f "$TARGET_ZSHRC" ]]; then
+    local backup
+    backup="${TARGET_ZSHRC}.bak.$(date +%Y%m%d-%H%M%S)"
+    cp "$TARGET_ZSHRC" "$backup"
+    echo "Backed up existing ~/.zshrc to $backup"
+  fi
+
+  cp "$SOURCE_ZSHRC" "$TARGET_ZSHRC"
+  echo "Applied Pop!_OS zshrc: $SOURCE_ZSHRC -> $TARGET_ZSHRC"
+  echo "Reload with: exec zsh"
+}
+
+run_setup() {
+  if [[ ! -x "$SETUP_SCRIPT" ]]; then
+    chmod +x "$SETUP_SCRIPT"
+  fi
+  "$SETUP_SCRIPT"
+}
+
+main() {
+  local cmd="${1:-all}"
+  case "$cmd" in
+    all)
+      run_setup
+      apply_pop_os_zshrc
+      ;;
+    setup)
+      run_setup
+      ;;
+    zshrc)
+      apply_pop_os_zshrc
+      ;;
+    help|-h|--help)
+      usage
+      ;;
+    *)
+      echo "Unknown command: $cmd" >&2
+      usage
+      exit 1
+      ;;
+  esac
+}
+
+main "$@"

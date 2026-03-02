@@ -11,7 +11,7 @@
 
 **Tags:** `zsh` `zshrc` `iterm2` `cursor` `vscode` `intellij` `jetbrains` `themes` `color-schemes` `macos` `homebrew` `dotfiles` `config` `development` `terminal` `shell` `ide` `editor`
 
-A curated collection of development configuration files, themes, and setup scripts for macOS development environments.
+A curated collection of development configuration files, themes, and setup scripts for macOS and Pop!_OS development environments.
 
 ## 📞 Contact
 
@@ -27,7 +27,7 @@ This repository contains my personal dotfiles and development configurations, or
 
 - **Terminal**: iTerm2 with custom color schemes
 - **IDEs**: IntelliJ IDEA / JetBrains IDEs with custom themes
-- **Operating System**: macOS (Darwin)
+- **Operating Systems**: macOS (Darwin), Pop!_OS / Ubuntu Linux
 - **Shell**: Zsh with Homebrew package manager
 - **Version Control**: Git
 
@@ -71,8 +71,8 @@ This repository contains my personal dotfiles and development configurations, or
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/trevormcdougald/public-dotfiles.git
-   cd public-dotfiles
+   git clone https://github.com/trevormcdougald/dotfiles.git
+   cd dotfiles
    ```
 
 2. **Install iTerm2 themes:**
@@ -84,6 +84,40 @@ This repository contains my personal dotfiles and development configurations, or
    - Open IntelliJ IDEA → File → Settings → Editor → Color Scheme
    - Click the gear icon → "Import Scheme"
    - Select any `.icls` file from the `themes/` directory
+
+## 🐧 Pop!_OS Setup
+
+Use the single entrypoint script: `setups/pop-os`.
+
+```bash
+# from repo root
+chmod +x setups/pop-os
+./setups/pop-os
+```
+
+This default `all` mode will:
+
+- Run the full Pop!_OS machine setup via `setups/setup_pop_os_2026.sh`
+- Apply `./.zshrc-ubuntu` to `~/.zshrc` (with automatic backup)
+
+Optional modes:
+
+```bash
+# setup only (packages/dev tooling)
+./setups/pop-os setup
+
+# zshrc only
+./setups/pop-os zshrc
+
+# help
+./setups/pop-os help
+```
+
+After running setup:
+
+- Restart shell: `exec zsh`
+- If added to docker group, log out/in once
+- Verify key tools: `brew doctor && docker --version && gh --version`
 
 ## 📄 License
 
