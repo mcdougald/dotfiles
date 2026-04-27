@@ -1,0 +1,8 @@
+# Global Ruff defaults; projects override via pyproject.toml / ruff.toml.
+# https://docs.astral.sh/ruff/configuration/
+line-length = 100
+target-version = "py311"
+
+[lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = []

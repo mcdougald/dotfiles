@@ -1,0 +1,21 @@
+// Three-band layout: main workspace, runner, stacked utility panes (logs, watch, etc.).
+layout {
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        children
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+    tab name="fullstack" split_direction="horizontal" {
+        pane name="workspace" size="55%" focus=true
+        pane name="runner" size="25%"
+        pane stacked=true size="20%" {
+            pane name="logs"
+            pane name="watch"
+            pane name="extras"
+        }
+    }
+}

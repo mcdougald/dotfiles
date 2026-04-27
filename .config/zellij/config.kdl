@@ -1,0 +1,18 @@
+// Zellij — dotfiles defaults (macOS-friendly, Tokyo Night Storm, session resurrect).
+// Docs: https://zellij.dev/documentation/configuration.html
+// Validate: zellij setup --check
+
+theme "tokyo-night-storm"
+
+// Clipboard on macOS (OSC 52 still works in many terminals; this covers the rest)
+copy_command "pbcopy"
+
+// Layouts live alongside this file in ./layouts/
+default_layout "dev"
+
+show_release_notes false
+session_serialization true
+scroll_buffer_size 50000
+
+// Better key reporting in Kitty, WezTerm, Ghostty, etc.
+support_kitty_keyboard_protocol true

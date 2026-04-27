@@ -1,0 +1,7 @@
+# https://docs.helix-editor.com/master/configuration.html
+theme = "onedark"
+
+[editor]
+line-number = "relative"
+mouse = true
+rulers = [100]

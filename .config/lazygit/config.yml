@@ -1,0 +1,17 @@
+# https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md
+gui:
+  branchTokens:
+    '*': yellow
+  splitDiff: horizontal
+  skipDiscardChangeWarning: false
+  skipStashWarning: true
+  showIcons: true
+git:
+  paging:
+    colorArg: always
+    pager: less -F -X
+  parseEmoji: true
+  disableForcePushing: false
+update:
+  method: never
+  days: 14

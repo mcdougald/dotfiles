@@ -1,0 +1,8 @@
+# https://direnv.net/man/direnv.toml.1.html
+[global]
+load_dotenv = true
+strict_env = false
+
+# Uncomment to allow specific trees without .envrc warnings:
+# [whitelist]
+# prefix = [ "/Users/you/src/work" ]

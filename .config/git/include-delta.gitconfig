@@ -1,0 +1,14 @@
+# Optional fragment: include from ~/.gitconfig via:
+#   git config --global include.path ~/.config/git/include-delta.gitconfig
+# Requires `delta` on PATH (brew install git-delta).
+[core]
+	pager = delta
+
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	features = line-numbers decorations
+	navigate = true
+	side-by-side = false
+	syntax-theme = OneHalfDark

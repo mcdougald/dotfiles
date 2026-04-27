@@ -1,0 +1,6 @@
+# https://taplo.tamasfe.dev/configuration/
+[formatting]
+align_entries = true
+align_comments = true
+column_width = 100
+reorder_keys = false

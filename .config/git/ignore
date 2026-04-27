@@ -1,0 +1,13 @@
+# Suggested global excludes. Point git at this file:
+#   git config --global core.excludesfile ~/.config/git/ignore
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+Thumbs.db
+*.swp
+*.swo
+*~
+.env
+.env.*.local
+!.env.example

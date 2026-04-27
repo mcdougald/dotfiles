@@ -1,0 +1,7 @@
+# Ripgrep: set RIPGREP_CONFIG_PATH to this file if your build does not use XDG:
+#   export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/ripgrep/config"
+--smart-case
+--colors=line:style:bold
+--colors=path:fg:green
+--colors=match:fg:red
+--colors=match:style:bold

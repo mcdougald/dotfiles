@@ -1,0 +1,16 @@
+// Primary layout: wide editor/workspace + narrow runner (tests, REPL, second shell).
+layout {
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        children
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+    tab name="main" split_direction="horizontal" {
+        pane name="workspace" size="68%" focus=true
+        pane name="runner" size="32%"
+    }
+}
