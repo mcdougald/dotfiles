@@ -1,0 +1,34 @@
+{
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "workbench.iconTheme": "material-icon-theme",
+  "files.autoSave": "afterDelay",
+  "security.workspace.trust.untrustedFiles": "open",
+  "git.autofetch": true,
+  "workbench.colorTheme": "Atom One Dark",
+  "terminal.integrated.suggest.enabled": true,
+  "workbench.editor.enablePreview": false,
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "autoOpenPreviewPanel.extensionEnabled": false,
+  "gitlens.home.preview.enabled": false,
+  "[dockercompose]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.autoIndent": "advanced",
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": false,
+      "strings": true
+    },
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "typescript.tsserver.maxTsServerMemory": 6072,
+  "aws.cloudformation.telemetry.enabled": false
+}

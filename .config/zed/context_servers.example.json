@@ -1,0 +1,25 @@
+{
+  "context_servers": {
+    "mcp-server-github": {
+      "source": "extension",
+      "enabled": true,
+      "settings": {
+        "github_personal_access_token": ""
+      }
+    },
+    "postgres-context-server": {
+      "source": "extension",
+      "enabled": false,
+      "settings": {
+        "database_url": ""
+      }
+    },
+    "posthog": {
+      "enabled": false,
+      "url": "https://mcp.posthog.com/mcp",
+      "headers": {
+        "Authorization": "Bearer "
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+// Zed — safe defaults for dotfiles (no API tokens).
+// Merge in context servers locally, or symlink only this file:
+//   ln -sfn "$DOTFILES/.config/zed/settings.json" ~/.config/zed/settings.json
+//
+// Docs: https://zed.dev/docs/configuring-zed
+{
+  "autosave": {
+    "after_delay": {
+      "milliseconds": 1000
+    }
+  },
+  "icon_theme": "Material Icon Theme",
+  "telemetry": {
+    "diagnostics": true,
+    "metrics": false
+  },
+  "ui_font_size": 16,
+  "buffer_font_size": 15,
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "One Dark"
+  }
+}
