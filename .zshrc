@@ -7,10 +7,8 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-if [ -x "$(command -v colorls)" ]; then
-    alias ls="colorls"
-    alias la="colorls -al"
-fi
+# Drop duplicate PATH entries from Homebrew, mise shims, etc.
+typeset -U path PATH
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -30,16 +28,13 @@ export ZSH="$HOME/.oh-my-zsh"
 # [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 
-# Homebrew
-if command -v brew >/dev/null; then
-  BREWSBIN=/usr/local/sbin
-  BREWBIN=/usr/local/bin
-  echo $PATH | grep -q $BREWSBIN || export PATH=$BREWSBIN:$PATH
-  echo $PATH | grep -q $BREWBIN || export PATH=$BREWBIN:$PATH
+# Homebrew (Intel: /usr/local, Apple Silicon: /opt/homebrew — brew shellenv handles both)
+if command -v brew >/dev/null 2>&1; then
+  eval "$(brew shellenv)"
 fi
 
-# aliases
-[ -f "${XDG_CONFIG_HOME}/.dotfiles2/functions.zsh" ] && source "${XDG_CONFIG_HOME}/.dotfiles2/functions.zsh"
+# aliases / shared functions (default XDG config dir when unset)
+[[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/.dotfiles2/functions.zsh" ]] && source "${XDG_CONFIG_HOME:-$HOME/.config}/.dotfiles2/functions.zsh"
 
 
 # Set Options
@@ -62,7 +57,6 @@ setopt hist_ignore_dups       # Do not write events to history that are duplicat
 setopt hist_ignore_space      # remove command line from history list when first character is a space
 setopt hist_reduce_blanks     # remove superfluous blanks from history items
 setopt hist_verify            # show command with history expansion to user before running it
-setopt histignorespace        # remove commands from the history when the first character is a space
 setopt inc_append_history     # save history entries as soon as they are entered
 setopt interactivecomments    # allow use of comments in interactive code (bash-style comments)
 setopt longlistjobs           # display PID when suspending processes as well
@@ -142,7 +136,6 @@ plugins=(
   git
   nvm
   colorize
-  git
   git-extras
   git-prompt
   git-flow
@@ -155,31 +148,23 @@ plugins=(
   aws
   pre-commit
   vscode
-  # tmux
   python
   gh
   copyfile
   alias-finder
-  command-not-found
   common-aliases
   you-should-use
   tmux
   tmuxinator
-  zsh-syntax-highlighting
-  zsh-autosuggestions
   zsh-completions
   mvn
+  zsh-autosuggestions
+  zsh-syntax-highlighting
 )
 
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
 
 source $ZSH/oh-my-zsh.sh
-
-# Load zsh-syntax-highlighting plugin
-source $ZSH/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-# Load zsh-autosuggestions
-source $ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # User configuration
 
@@ -259,7 +244,7 @@ mine() {
 }
 
 
-alias cat="bat"
+command -v bat >/dev/null 2>&1 && alias cat="bat"
 
 # source /opt/homebrew/opt/powerlevel10k/powerlevel10k.zsh-theme
 # source ~/.powerlevel10k/powerlevel10k.zsh-theme
