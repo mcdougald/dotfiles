@@ -1,0 +1,15 @@
+# Copied to ~/.config/herdr/plugins/config/persiyanov.reviewr/config.toml
+# Docs: https://github.com/persiyanov/herdr-reviewr
+# Any invalid key invalidates the whole file — keep this lean.
+# Themes: tokyo-night, tokyo-night-day, catppuccin, catppuccin-latte,
+# catppuccin-frappe, catppuccin-macchiato, dracula, nord, gruvbox,
+# gruvbox-light, one-dark, one-light, solarized, solarized-light,
+# rose-pine, rose-pine-dawn, monokai, github-light.
+# prefix+alt+m updates this when the Herdr theme is also a reviewr theme.
+
+theme = "tokyo-night"
+default_scope = "branch"
+navigator_position = "left"
+toggle_placement = "split"
+toggle_direction = "right"
+auto_open = true

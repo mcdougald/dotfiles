@@ -75,6 +75,7 @@ BREW_PACKAGES=(
   k9s
   kind
   kubectl
+  herdr
   lazygit
   mise
   neovim
@@ -99,6 +100,7 @@ BREW_TERMINAL_PACKAGES=(
   fzf
   gh
   git-delta
+  herdr
   jq
   lazygit
   neovim

@@ -1,0 +1,7 @@
+# Runtime lives in ~/.config/herdr when this tree is copied or mis-linked.
+# Only config.toml (and this ignore / README) should be in git.
+*.log
+*.log.*
+*.sock
+session.json
+session-history.json

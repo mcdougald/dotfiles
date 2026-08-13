@@ -1,0 +1,583 @@
+# Herdr — agent multiplexer (lean overrides only).
+# Docs: https://herdr.dev/docs/configuration/
+# Keys:  https://herdr.dev/docs/config-reference/
+# Dump live defaults: herdr --default-config
+# Apply without restarting panes: herdr server reload-config
+#
+# Track this file in git. Do not symlink the whole ~/.config/herdr directory
+# (logs, sockets, and session.json live there at runtime).
+
+onboarding = false
+
+[theme]
+# Built-ins: catppuccin, catppuccin-latte, tokyo-night, tokyo-night-day,
+# dracula, nord, gruvbox, gruvbox-light, one-dark, one-light, solarized,
+# solarized-light, kanagawa, kanagawa-lotus, rose-pine, rose-pine-dawn,
+# vesper, terminal (host ANSI). Pick live with prefix+alt+m.
+name = "tokyo-night"
+auto_switch = true
+light_name = "tokyo-night-day"
+dark_name = "tokyo-night"
+
+[theme.custom]
+accent = "#7aa2f7"
+blue = "#7aa2f7"
+teal = "#7dcfff"
+yellow = "#e0af68"
+green = "#9ece6a"
+red = "#f7768e"
+mauve = "#bb9af7"
+
+[terminal]
+# Empty = $SHELL (zsh here). auto = login shells on macOS so Homebrew PATH
+# and path_helper run in new panes.
+default_shell = ""
+shell_mode = "auto"
+new_cwd = "follow"
+
+[update]
+channel = "stable"
+version_check = true
+manifest_check = true
+
+[session]
+# Resume Claude / Codex / Cursor / Copilot / etc. via official integrations.
+# Install: herdr integration install claude
+resume_agents_on_restore = true
+
+[worktrees]
+# Sibling-style checkouts: <root>/<repo>/<branch>
+directory = "~/workspace/herdr-worktrees"
+
+[remote]
+manage_ssh_config = true
+
+[advanced]
+# ~20 MiB per pane. Agent TUIs are verbose; keep pane_history off (secrets).
+scrollback_limit_bytes = 20000000
+
+[experimental]
+allow_nested = false
+kitty_graphics = false
+pane_history = false
+switch_ascii_input_source_in_prefix = true
+
+# -----------------------------------------------------------------------------
+# Keys — prefix-first (does not steal shell/editor chords) plus ctrl+alt
+# dual bindings that survive iTerm2, Ghostty, and macOS Option composing.
+# Help: prefix+?     Reset keys: herdr config reset-keys
+# -----------------------------------------------------------------------------
+[keys]
+prefix = "ctrl+b"
+
+help = "prefix+?"
+settings = "prefix+s"
+goto = "prefix+g"
+workspace_picker = "prefix+w"
+detach = "prefix+q"
+reload_config = "prefix+shift+r"
+open_notification_target = "prefix+o"
+edit_scrollback = "prefix+e"
+copy_mode = "prefix+["
+toggle_sidebar = ["prefix+b", "ctrl+alt+b"]
+last_pane = ["prefix+;", "ctrl+alt+;"]
+remote_image_paste = "ctrl+v"
+
+new_workspace = "prefix+shift+n"
+rename_workspace = "prefix+shift+w"
+close_workspace = "prefix+shift+d"
+previous_workspace = "prefix+{"
+next_workspace = "prefix+}"
+switch_workspace = "prefix+shift+1..9"
+
+new_worktree = "prefix+shift+g"
+open_worktree = "prefix+shift+o"
+remove_worktree = "prefix+shift+backspace"
+
+previous_agent = "prefix+,"
+next_agent = "prefix+."
+focus_agent = "prefix+alt+1..9"
+
+new_tab = ["prefix+c", "ctrl+alt+c"]
+rename_tab = "prefix+shift+t"
+close_tab = "prefix+shift+x"
+previous_tab = ["prefix+p", "ctrl+alt+["]
+next_tab = ["prefix+n", "ctrl+alt+]"]
+switch_tab = "prefix+1..9"
+
+focus_pane_left = ["prefix+h", "ctrl+alt+h"]
+focus_pane_down = ["prefix+j", "ctrl+alt+j"]
+focus_pane_up = ["prefix+k", "ctrl+alt+k"]
+focus_pane_right = ["prefix+l", "ctrl+alt+l"]
+swap_pane_left = "prefix+shift+h"
+swap_pane_down = "prefix+shift+j"
+swap_pane_up = "prefix+shift+k"
+swap_pane_right = "prefix+shift+l"
+cycle_pane_next = "prefix+tab"
+cycle_pane_previous = "prefix+shift+tab"
+split_vertical = ["prefix+v", "ctrl+alt+d"]
+split_horizontal = ["prefix+minus", "ctrl+alt+shift+d"]
+close_pane = "prefix+x"
+zoom = ["prefix+z", "ctrl+alt+z"]
+resize_mode = "prefix+r"
+rename_pane = "prefix+shift+p"
+
+navigate_workspace_up = "up"
+navigate_workspace_down = "down"
+navigate_pane_left = "h"
+navigate_pane_down = "j"
+navigate_pane_up = "k"
+navigate_pane_right = "l"
+
+# 0.8.0 session-modal popups: no layout change, Esc/exit closes.
+# Inherit focused pane cwd. Missing tools print a one-line hint.
+[[keys.command]]
+key = "prefix+alt+g"
+type = "popup"
+command = "command -v lazygit >/dev/null && exec lazygit || { echo 'brew install lazygit'; read; }"
+description = "lazygit"
+width = "92%"
+height = "88%"
+
+[[keys.command]]
+key = "prefix+t"
+type = "popup"
+command = "exec \"${SHELL:-zsh}\""
+description = "scratch terminal"
+width = "82%"
+height = "72%"
+
+[[keys.command]]
+key = "prefix+alt+b"
+type = "popup"
+command = "command -v btop >/dev/null && exec btop || command -v htop >/dev/null && exec htop || { echo 'brew install btop'; read; }"
+description = "process monitor"
+width = "88%"
+height = "82%"
+
+[[keys.command]]
+key = "prefix+alt+d"
+type = "popup"
+command = "git rev-parse --is-inside-work-tree >/dev/null 2>&1 && git -c core.pager='delta --paging=always' diff || { echo 'not a git repo (or install git-delta)'; read; }"
+description = "git diff (delta)"
+width = "90%"
+height = "82%"
+
+[[keys.command]]
+key = "prefix+alt+p"
+type = "popup"
+command = "if ! command -v gh >/dev/null; then echo 'brew install gh && gh auth login'; read; exit 1; fi; if gh extension list 2>/dev/null | grep -q gh-dash; then exec gh dash; fi; GH_FORCE_TTY=1 GH_PAGER='less -R' gh pr status; echo; GH_FORCE_TTY=1 GH_PAGER='less -R' gh issue list --limit 20"
+description = "GitHub PRs / issues"
+width = "88%"
+height = "80%"
+
+[[keys.command]]
+key = "prefix+alt+f"
+type = "popup"
+command = "command -v fzf >/dev/null || { echo 'brew install fzf'; read; exit 1; }; file=$(fzf --height=100% --preview 'command -v bat >/dev/null && bat --color=always --style=numbers --line-range=:200 {} || cat {}') && [ -n \"$file\" ] && ${EDITOR:-nvim} \"$file\""
+description = "fuzzy file → editor"
+width = "86%"
+height = "78%"
+
+[[keys.command]]
+key = "prefix+alt+k"
+type = "popup"
+command = "command -v k9s >/dev/null && exec k9s || { echo 'brew install k9s'; read; }"
+description = "k9s"
+width = "94%"
+height = "90%"
+
+[[keys.command]]
+key = "prefix+alt+a"
+type = "popup"
+command = "echo '=== agents ==='; herdr agent list; echo; echo '=== explain (focused pane) ==='; herdr agent explain \"${HERDR_ACTIVE_PANE_ID:-}\" 2>/dev/null || echo '(no agent on focused pane)'; echo; echo '=== integrations ==='; herdr integration status 2>/dev/null || true; exec less -R"
+description = "agent dashboard"
+width = "86%"
+height = "80%"
+
+# --- AI (popup sessions; exit the TUI to close. Persistent agents belong in panes.)
+[[keys.command]]
+key = "prefix+alt+c"
+type = "popup"
+command = "command -v claude >/dev/null && exec claude || { echo 'install Claude Code CLI'; read; }"
+description = "Claude Code"
+width = "92%"
+height = "88%"
+
+[[keys.command]]
+key = "prefix+alt+i"
+type = "popup"
+command = '''
+set -- claude cursor-agent copilot codex agy gemini opencode grok pi
+avail=""
+for c in "$@"; do
+  command -v "$c" >/dev/null 2>&1 && avail="${avail}${c}\n"
+done
+if [ -z "$avail" ]; then
+  echo "no AI CLIs on PATH (claude, cursor-agent, copilot, codex, agy, gemini, opencode, grok, pi)"
+  read
+  exit 1
+fi
+if command -v fzf >/dev/null 2>&1; then
+  sel=$(printf '%b' "$avail" | fzf --prompt='AI> ' --height=100% --reverse)
+else
+  printf '%b' "$avail"
+  printf 'AI> '
+  IFS= read -r sel
+fi
+[ -n "$sel" ] && exec "$sel"
+'''
+description = "AI launcher"
+width = "92%"
+height = "88%"
+
+[[keys.command]]
+key = "prefix+alt+s"
+type = "popup"
+command = '''
+id="${HERDR_ACTIVE_PANE_ID:-}"
+if [ -z "$id" ]; then
+  echo "no focused pane"
+  read
+  exit 1
+fi
+echo "Focused pane: $id"
+herdr agent explain "$id" 2>/dev/null || echo "(no detected agent — prompt still sent to this pane's agent if one is running)"
+echo
+printf 'prompt> '
+IFS= read -r p || exit 0
+[ -z "$p" ] && exit 0
+herdr agent prompt "$id" "$p"
+echo
+echo "sent. enter to close."
+read
+'''
+description = "prompt focused agent"
+width = "72%"
+height = "40%"
+
+[[keys.command]]
+key = "prefix+alt+o"
+type = "popup"
+command = "command -v ollama >/dev/null && exec ollama run \"${OLLAMA_MODEL:-llama3.2}\" || { echo 'brew install ollama'; read; }"
+description = "Ollama chat"
+width = "80%"
+height = "70%"
+
+# --- Review plugins + remaining popups
+[[keys.command]]
+key = "prefix+alt+r"
+type = "plugin_action"
+command = "persiyanov.reviewr.toggle"
+description = "reviewr (toggle)"
+
+[[keys.command]]
+key = "prefix+alt+v"
+type = "popup"
+command = '''
+if ! command -v gh >/dev/null 2>&1; then echo 'brew install gh && gh auth login'; read; exit 1; fi
+if gh pr view >/dev/null 2>&1; then
+  GH_FORCE_TTY=1 gh pr view --comments | less -R
+else
+  echo "no PR for this branch. pick one:"
+  pr=$(gh pr list --limit 40 --json number,title,headRefName --jq '.[] | "#\(.number)\t\(.title)\t[\(.headRefName)]"' | fzf --height=100% --reverse --prompt='PR> ')
+  num=$(printf '%s' "$pr" | sed -n 's/^#\([0-9][0-9]*\).*/\1/p')
+  [ -n "$num" ] && GH_FORCE_TTY=1 gh pr view "$num" --comments | less -R
+fi
+'''
+description = "PR conversation"
+width = "88%"
+height = "84%"
+
+[[keys.command]]
+key = "prefix+alt+u"
+type = "popup"
+command = '''
+if ! command -v gh >/dev/null 2>&1; then echo 'brew install gh && gh auth login'; read; exit 1; fi
+if gh pr view >/dev/null 2>&1; then
+  gh pr checks --watch
+else
+  echo "no PR for this branch"
+  gh pr checks 2>/dev/null || true
+  read
+fi
+'''
+description = "PR checks (watch)"
+width = "80%"
+height = "70%"
+
+[[keys.command]]
+key = "prefix+alt+l"
+type = "popup"
+command = '''
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then echo 'not a git repo'; read; exit 1; fi
+if command -v delta >/dev/null 2>&1; then
+  git -c core.pager='delta --paging=always' log -p --stat -n 40
+else
+  git log -p --stat -n 40 | less -R
+fi
+'''
+description = "commit review (git log -p)"
+width = "90%"
+height = "86%"
+
+[[keys.command]]
+key = "prefix+alt+j"
+type = "popup"
+command = "if command -v lazyjournal >/dev/null; then exec lazyjournal; fi; log=\"${XDG_CONFIG_HOME:-$HOME/.config}/herdr/herdr-server.log\"; [ -f \"$log\" ] && exec less +G \"$log\" || { echo 'no herdr-server.log yet'; read; }"
+description = "logs (lazyjournal / herdr)"
+width = "90%"
+height = "82%"
+
+[[keys.command]]
+key = "prefix+y"
+type = "shell"
+command = "printf '%s' \"${HERDR_ACTIVE_PANE_CWD:-$PWD}\" | (pbcopy 2>/dev/null || wl-copy 2>/dev/null || xclip -selection clipboard); herdr notification show 'Copied pane cwd' --body \"${HERDR_ACTIVE_PANE_CWD:-$PWD}\" --position bottom-center --sound none >/dev/null 2>&1 || true"
+description = "yank pane cwd"
+
+# Plugins: reviewr, file-viewer, tab-smart-rename, herdr-sidebar,
+# sessionizer, plugin-manager, herdr-control
+# Install: bash "$DOTFILES/.config/herdr/install-plugins.sh"
+[[keys.command]]
+key = "cmd+r"
+type = "plugin_action"
+command = "persiyanov.reviewr.toggle"
+description = "reviewr (toggle)"
+
+[[keys.command]]
+key = "prefix+f"
+type = "plugin_action"
+command = "herdr-file-viewer.open-file-viewer"
+description = "file viewer (split)"
+
+[[keys.command]]
+key = "prefix+shift+f"
+type = "plugin_action"
+command = "herdr-file-viewer.open-file-viewer-tab"
+description = "file viewer (tab)"
+
+[[keys.command]]
+key = "prefix+alt+t"
+type = "plugin_action"
+command = "tab-smart-rename.rename-now"
+description = "smart rename tab"
+
+[[keys.command]]
+key = "prefix+alt+shift+t"
+type = "plugin_action"
+command = "tab-smart-rename.rename-all"
+description = "smart rename all tabs"
+
+[[keys.command]]
+key = "prefix+shift+e"
+type = "plugin_action"
+command = "herdr-sidebar.open-sidebar"
+description = "explorer sidebar (plugin)"
+
+[[keys.command]]
+key = "prefix+shift+c"
+type = "plugin_action"
+command = "herdr-sidebar.open-git"
+description = "source control pane (plugin)"
+
+[[keys.command]]
+key = "ctrl+alt+f"
+type = "plugin_action"
+command = "sessionizer.open"
+description = "sessionizer (projects)"
+
+[[keys.command]]
+key = "prefix+up"
+type = "plugin_action"
+command = "sessionizer.worktree-open"
+description = "sessionizer (worktrees)"
+
+# prefix+p is previous_tab (tmux-style). Plugin manager uses shift+m / ctrl+alt+p.
+[[keys.command]]
+key = "prefix+shift+m"
+type = "plugin_action"
+command = "ray.plugin-manager.open"
+description = "plugin manager"
+
+[[keys.command]]
+key = "ctrl+alt+p"
+type = "plugin_action"
+command = "ray.plugin-manager.open"
+description = "plugin manager"
+
+[[keys.command]]
+key = "prefix+alt+shift+o"
+type = "plugin_action"
+command = "tntpgh.herdr-control.projects"
+description = "herdr-control (projects)"
+
+[[keys.command]]
+key = "prefix+alt+shift+q"
+type = "plugin_action"
+command = "tntpgh.herdr-control.quick-actions"
+description = "herdr-control (quick actions)"
+
+[[keys.command]]
+key = "prefix+shift+s"
+type = "plugin_action"
+command = "tntpgh.herdr-control.sort-tabs"
+description = "herdr-control (sort tabs)"
+
+[[keys.command]]
+key = "prefix+alt+n"
+type = "plugin_action"
+command = "tntpgh.herdr-control.smart-name"
+description = "herdr-control (name this tab)"
+
+[[keys.command]]
+key = "prefix+alt+shift+a"
+type = "plugin_action"
+command = "tntpgh.herdr-control.attention"
+description = "herdr-control (what needs me)"
+
+[[keys.command]]
+key = "prefix+alt+m"
+type = "popup"
+command = "exec bash \"${XDG_CONFIG_HOME:-$HOME/.config}/herdr/bin/pick-theme.sh\""
+description = "pick Herdr theme"
+width = "64%"
+height = "70%"
+
+[[keys.command]]
+key = "prefix+alt+z"
+type = "popup"
+command = '''
+if ! command -v zoxide >/dev/null 2>&1; then echo 'brew install zoxide'; read; exit 1; fi
+dir=$(zoxide query -i) || exit 0
+[ -n "$dir" ] || exit 0
+cd "$dir" && exec "${SHELL:-zsh}"
+'''
+description = "zoxide jump (scratch)"
+width = "86%"
+height = "78%"
+
+# -----------------------------------------------------------------------------
+# UI — 0.8.0 styled sidebar, reclaim chrome, click-to-jump toasts.
+# -----------------------------------------------------------------------------
+[ui]
+sidebar_width = 32
+sidebar_min_width = 22
+sidebar_max_width = 44
+sidebar_start_collapsed = false
+sidebar_collapsed_mode = "compact"
+mobile_width_threshold = 72
+mouse_capture = true
+copy_on_select = true
+host_cursor = "auto"
+right_click_passthrough_modifier = "ctrl"
+redraw_on_focus_gained = true
+mouse_scroll_lines = 3
+confirm_close = true
+prompt_new_tab_name = false
+prompt_new_workspace_name = true
+pane_borders = true
+pane_scrollbars = false
+pane_gaps = true
+show_agent_labels_on_pane_borders = true
+hide_tab_bar_when_single_tab = true
+tab_bar_position = "top"
+agent_panel_sort = "priority"
+accent = "#7aa2f7"
+
+# Tokyo Night token colors. Unreported $summary / $model rows disappear.
+[ui.sidebar.agents]
+row_gap = 1
+rows = [
+  ["state_icon", { token = "agent", bold = true }, { token = "state_text", fg = "#e0af68" }],
+  [{ token = "$summary", fg = "#7dcfff", bold = true }],
+  ["workspace", "tab", "pane"],
+]
+
+[ui.sidebar.agents.rows_by_agent]
+claude = [
+  ["state_icon", { token = "agent", bold = true }, { token = "state_text", fg = "#e0af68" }],
+  [{ token = "terminal_title_stripped", fg = "#7dcfff" }],
+  [{ token = "$summary", fg = "#bb9af7" }],
+  ["workspace", "tab", "pane"],
+]
+codex = [
+  ["state_icon", { token = "agent", bold = true }, { token = "state_text", fg = "#e0af68" }],
+  [{ token = "terminal_title_stripped", fg = "#7dcfff" }],
+  [{ token = "$summary", fg = "#bb9af7" }],
+  ["workspace", "tab", "pane"],
+]
+cursor = [
+  ["state_icon", { token = "agent", bold = true }, { token = "state_text", fg = "#e0af68" }],
+  [{ token = "terminal_title_stripped", fg = "#7dcfff" }],
+  [{ token = "$summary", fg = "#bb9af7" }],
+  ["workspace", "tab", "pane"],
+]
+copilot = [
+  ["state_icon", { token = "agent", bold = true }, { token = "state_text", fg = "#e0af68" }],
+  [{ token = "terminal_title_stripped", fg = "#7dcfff" }],
+  [{ token = "$summary", fg = "#bb9af7" }],
+  ["workspace", "tab", "pane"],
+]
+gemini = [
+  ["state_icon", { token = "agent", bold = true }, { token = "state_text", fg = "#e0af68" }],
+  [{ token = "terminal_title_stripped", fg = "#7dcfff" }],
+  ["workspace", "tab", "pane"],
+]
+agy = [
+  ["state_icon", { token = "agent", bold = true }, { token = "state_text", fg = "#e0af68" }],
+  [{ token = "terminal_title_stripped", fg = "#7dcfff" }],
+  ["workspace", "tab", "pane"],
+]
+opencode = [
+  ["state_icon", { token = "agent", bold = true }, { token = "state_text", fg = "#e0af68" }],
+  [{ token = "terminal_title_stripped", fg = "#7dcfff" }],
+  ["workspace", "tab", "pane"],
+]
+pi = [
+  ["state_icon", { token = "agent", bold = true }, { token = "state_text", fg = "#e0af68" }],
+  [{ token = "terminal_title_stripped", fg = "#7dcfff" }],
+  [{ token = "$summary", fg = "#bb9af7" }],
+  ["workspace", "tab", "pane"],
+]
+grok = [
+  ["state_icon", { token = "agent", bold = true }, { token = "state_text", fg = "#e0af68" }],
+  [{ token = "terminal_title_stripped", fg = "#7dcfff" }],
+  ["workspace", "tab", "pane"],
+]
+
+[ui.sidebar.spaces]
+row_gap = 1
+rows = [
+  ["state_icon", { token = "workspace", bold = true }, { token = "state_text", fg = "#e0af68" }],
+  ["branch", "git_status"],
+]
+
+# In-app toasts: click jumps to the pane. Over SSH use delivery = "terminal".
+# Detached machines: delivery = "system" + brew install terminal-notifier.
+[ui.toast]
+delivery = "herdr"
+delay_seconds = 1
+
+[ui.toast.herdr]
+position = "top-right"
+
+[ui.toast.clipboard]
+enabled = true
+position = "bottom-center"
+
+[ui.sound]
+enabled = true
+
+[ui.sound.agents]
+droid = "off"
+claude = "on"
+codex = "on"
+cursor = "on"
+github_copilot = "on"
+gemini = "on"
+open_code = "on"
+pi = "on"
+grok = "on"
+agy = "on"
+kimi = "on"
+hermes = "on"

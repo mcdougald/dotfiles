@@ -380,6 +380,7 @@ BREW_PACKAGES=(
   sk
   tmux
   zellij
+  herdr
   lazygit
   lazyjournal
 

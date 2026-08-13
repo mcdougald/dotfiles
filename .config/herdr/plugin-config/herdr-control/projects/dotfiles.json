@@ -1,0 +1,15 @@
+{
+  "name": "dotfiles",
+  "description": "Trevor's dotfiles — shell + Claude + lazygit",
+  "working_dir": "~/workspace/dotfiles",
+  "tabs": [
+    {
+      "label": "dev",
+      "panes": [
+        { "cmd": "zsh", "focus": true },
+        { "split": "right", "ratio": 0.35, "cmd": "claude" },
+        { "split": "down", "ratio": 0.32, "cmd": "lazygit" }
+      ]
+    }
+  ]
+}

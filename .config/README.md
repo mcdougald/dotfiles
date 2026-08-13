@@ -6,6 +6,26 @@ Paths below assume `DOTFILES` is the root of this repository, for example:
 DOTFILES="$HOME/workspace/dotfiles"
 ```
 
+## Herdr
+
+Agent multiplexer. Copy **managed files only** (runtime logs/sockets/session
+state stay in `~/.config/herdr`):
+
+```bash
+rsync -a --exclude session.json --exclude session-history.json \
+  --exclude '*.log' --exclude '*.log.*' --exclude '*.sock' \
+  "$DOTFILES/.config/herdr/" ~/.config/herdr/
+```
+
+Or link only `config.toml`:
+
+```bash
+mkdir -p ~/.config/herdr
+ln -sfn "$DOTFILES/.config/herdr/config.toml" ~/.config/herdr/config.toml
+```
+
+See `herdr/README.md` for install, reload, integrations, plugins, and keybindings.
+
 ## Zed
 
 ```bash

@@ -19,6 +19,7 @@ brew "tree"
 brew "htop"
 brew "neofetch"
 brew "bat"
+brew "glow"
 brew "exa"
 brew "fd"
 brew "ripgrep"
@@ -30,6 +31,7 @@ brew "zsh-completions"
 
 # Development languages and runtimes
 brew "node"
+brew "bun"
 brew "python@3.11"
 brew "python@3.12"
 brew "go"
@@ -38,7 +40,7 @@ brew "ruby"
 brew "php"
 
 # Package managers
-# brew "npm" - Manage with Mise 
+# brew "npm" - Manage with Mise
 brew "yarn"
 # brew "pnpm" - Manage with Mise
 brew "pipenv"
@@ -82,9 +84,11 @@ brew "emacs"
 
 # Terminal and shell tools
 brew "tmux"
+brew "herdr"
 brew "screen"
 brew "mosh"
 brew "ssh-copy-id"
+brew "terminal-notifier"
 
 # Network and security tools
 brew "nmap"

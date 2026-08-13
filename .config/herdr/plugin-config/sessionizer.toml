@@ -1,0 +1,46 @@
+# ~/.config/herdr/plugins/config/sessionizer/config.toml
+# https://github.com/andrewchng/herdr-sessionizer
+# Applied only when creating a new project/worktree workspace (not on focus).
+
+[projects]
+roots = ["~/workspace"]
+git_only = true
+depth = 1
+
+[ui]
+placement = "popup"
+width = "90%"
+height = "90%"
+
+[layout]
+focus = "workspace"
+
+[tabs.dev]
+label = "dev"
+
+[[tabs.dev.panes]]
+id = "workspace"
+title = "workspace"
+
+[[tabs.dev.panes]]
+id = "agent"
+from = "workspace"
+title = "claude"
+split = "right"
+ratio = 0.35
+command = "claude"
+
+[[tabs.dev.panes]]
+id = "git"
+from = "workspace"
+title = "lazygit"
+split = "down"
+ratio = 0.32
+command = "lazygit"
+
+[tabs.shell]
+label = "shell"
+
+[[tabs.shell.panes]]
+id = "shell"
+title = "shell"
