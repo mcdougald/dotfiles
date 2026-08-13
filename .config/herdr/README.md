@@ -96,9 +96,11 @@ bash "$DOTFILES/.config/herdr/install-plugins.sh"
 | [herdr-sessionizer](https://github.com/andrewchng/herdr-sessionizer) | `andrewchng/herdr-sessionizer` | `ctrl+alt+f` projects, `prefix+up` worktrees |
 | [herdr-plugin-manager](https://github.com/speardragon/herdr-plugin-manager) | `speardragon/herdr-plugin-manager` | `prefix+shift+m` / `ctrl+alt+p` |
 | [herdr-control](https://github.com/tntpgh/herdr-control) | `tntpgh/herdr-control` | projects `prefix+alt+shift+o`, quick actions `prefix+alt+shift+q`, sort `prefix+shift+s`, name tab `prefix+alt+n`, attention `prefix+alt+shift+a` |
+| [herdr-navigator](https://github.com/thanhdat77/herdr-navigator) | `thanhdat77/herdr-navigator` | `ctrl+alt+t` open |
 
 `prefix+b` remains Herdr’s built-in agent/workspace sidebar. The plugin explorer
-auto-docks on tab focus after install.
+opens with `prefix+shift+e` or `ctrl+alt+e` (Herdr 0.8 `plugin pane open`, so it
+restores after restart). Auto-dock on tab focus is patched the same way.
 
 Renderers for the file viewer: `brew install glow git-delta bat`. Smart rename
 needs [Bun](https://bun.sh) (`brew install bun`). herdr-sidebar compiles with
@@ -121,6 +123,13 @@ Sessionizer scans `~/workspace` (git repos, depth 1). New workspaces get a
 popup. Override per repo with `<repo>/.sessionizer/config.toml`. Global file:
 `plugin-config/sessionizer.toml` → `~/.config/herdr/plugins/config/sessionizer/config.toml`.
 Needs Bun and fzf (`brew install bun fzf`).
+
+Navigator is a fuzzy jump-to-anything picker across workspaces, agents,
+projects, sessions, remotes, and zoxide/root directories. Its own default key
+is `prefix+t`, already taken here by the scratch terminal, so it is bound to
+`ctrl+alt+t` instead. First run writes a commented config to
+`herdr plugin config-dir herdr-navigator`. Optional: `zoxide` for directory
+history (already used elsewhere in this config).
 
 Plugin manager is a popup over `herdr plugin` (install / update / disable /
 marketplace). Official `prefix+p` is previous-tab here, so it is bound to
@@ -174,7 +183,7 @@ Prefix is `ctrl+b`. Direct `ctrl+alt` chords are also bound for panes/tabs.
 | Reviewr (plugin) | `prefix+alt+r` or `cmd+r` |
 | File viewer split / tab | `prefix+f` / `prefix+shift+f` |
 | Smart rename tab / all | `prefix+alt+t` / `prefix+alt+shift+t` |
-| Explorer / source control (plugin) | `prefix+shift+e` / `prefix+shift+c` |
+| Explorer / source control (plugin) | `prefix+shift+e` / `ctrl+alt+e` · `prefix+shift+c` |
 | Sessionizer (projects) | `ctrl+alt+f` |
 | Sessionizer (worktrees) | `prefix+up` |
 | Plugin manager | `prefix+shift+m` or `ctrl+alt+p` |
@@ -183,6 +192,7 @@ Prefix is `ctrl+b`. Direct `ctrl+alt` chords are also bound for panes/tabs.
 | herdr-control sort tabs | `prefix+shift+s` |
 | herdr-control name this tab | `prefix+alt+n` |
 | herdr-control what needs me | `prefix+alt+shift+a` |
+| Navigator (jump to anything) | `ctrl+alt+t` |
 | Pick theme | `prefix+alt+m` |
 | zoxide jump (scratch) | `prefix+alt+z` |
 | Delete worktree checkout | `prefix+shift+backspace` |

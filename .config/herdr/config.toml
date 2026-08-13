@@ -336,7 +336,7 @@ command = "printf '%s' \"${HERDR_ACTIVE_PANE_CWD:-$PWD}\" | (pbcopy 2>/dev/null 
 description = "yank pane cwd"
 
 # Plugins: reviewr, file-viewer, tab-smart-rename, herdr-sidebar,
-# sessionizer, plugin-manager, herdr-control
+# sessionizer, plugin-manager, herdr-control, navigator
 # Install: bash "$DOTFILES/.config/herdr/install-plugins.sh"
 [[keys.command]]
 key = "cmd+r"
@@ -370,8 +370,14 @@ description = "smart rename all tabs"
 
 [[keys.command]]
 key = "prefix+shift+e"
-type = "plugin_action"
-command = "herdr-sidebar.open-sidebar"
+type = "shell"
+command = "exec bash \"${XDG_CONFIG_HOME:-$HOME/.config}/herdr/bin/open-explorer.sh\""
+description = "explorer sidebar (plugin)"
+
+[[keys.command]]
+key = "ctrl+alt+e"
+type = "shell"
+command = "exec bash \"${XDG_CONFIG_HOME:-$HOME/.config}/herdr/bin/open-explorer.sh\""
 description = "explorer sidebar (plugin)"
 
 [[keys.command]]
@@ -434,6 +440,13 @@ key = "prefix+alt+shift+a"
 type = "plugin_action"
 command = "tntpgh.herdr-control.attention"
 description = "herdr-control (what needs me)"
+
+# Navigator's own default is prefix+t, already taken here by scratch terminal.
+[[keys.command]]
+key = "ctrl+alt+t"
+type = "plugin_action"
+command = "herdr-navigator.open"
+description = "navigator (jump to anything)"
 
 [[keys.command]]
 key = "prefix+alt+m"

@@ -22,6 +22,8 @@ ln -sfn "$CFG/herdr/plugin-config/sessionizer.toml" "$SESS_CFG/config.toml"
 
 mkdir -p "$HOME/.config/herdr/bin"
 ln -sfn "$CFG/herdr/bin/pick-theme.sh" "$HOME/.config/herdr/bin/pick-theme.sh"
+ln -sfn "$CFG/herdr/bin/open-explorer.sh" "$HOME/.config/herdr/bin/open-explorer.sh"
+ln -sfn "$CFG/herdr/bin/patch-herdr-sidebar.sh" "$HOME/.config/herdr/bin/patch-herdr-sidebar.sh"
 
 HC_PROJ="$HOME/.config/herdr-control/projects"
 mkdir -p "$HC_PROJ"

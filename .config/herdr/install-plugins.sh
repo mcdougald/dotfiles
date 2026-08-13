@@ -53,6 +53,13 @@ install_one alexarthurs/herdr-sidebar/plugins/herdr-sidebar
 install_one andrewchng/herdr-sessionizer
 install_one speardragon/herdr-plugin-manager
 install_one tntpgh/herdr-control
+install_one thanhdat77/herdr-navigator
+
+if [[ -x "$SCRIPT_DIR/bin/patch-herdr-sidebar.sh" ]]; then
+  bash "$SCRIPT_DIR/bin/patch-herdr-sidebar.sh" || true
+elif [[ -x "$SCRIPT_DIR/patch-herdr-sidebar.sh" ]]; then
+  bash "$SCRIPT_DIR/patch-herdr-sidebar.sh" || true
+fi
 
 REV_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/herdr/plugins/config/persiyanov.reviewr"
 mkdir -p "$REV_DIR"
