@@ -6,6 +6,16 @@ set -euo pipefail
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CFG="$DOTFILES/.config"
 
+# Back up a real file/dir before replacing it with a symlink; leave existing
+# symlinks alone (ln -sfn retargets those safely).
+backup() {
+  local target="$1"
+  if [[ -e "$target" && ! -L "$target" ]]; then
+    mv "$target" "$target.backup-$(date +%Y%m%d%H%M%S)"
+    echo "Backed up $target"
+  fi
+}
+
 mkdir -p "$HOME/.config/zed"
 ln -sfn "$CFG/zed/settings.json" "$HOME/.config/zed/settings.json"
 
@@ -34,12 +44,23 @@ fi
 mkdir -p "$HOME/.claude"
 ln -sfn "$CFG/claude/settings.json" "$HOME/.claude/settings.json"
 
+mkdir -p "$HOME/.config/opencode"
+for f in opencode.json tui.json AGENTS.md; do
+  backup "$HOME/.config/opencode/$f"
+  ln -sfn "$CFG/opencode/$f" "$HOME/.config/opencode/$f"
+done
+for d in agent command; do
+  backup "$HOME/.config/opencode/$d"
+  ln -sfn "$CFG/opencode/$d" "$HOME/.config/opencode/$d"
+done
+
 AG_USER="$HOME/Library/Application Support/Antigravity/User"
 mkdir -p "$AG_USER"
 ln -sfn "$CFG/antigravity/User/settings.json" "$AG_USER/settings.json"
 ln -sfn "$CFG/antigravity/User/keybindings.json" "$AG_USER/keybindings.json"
 
-echo "Linked Zed, Herdr, Claude, and Antigravity User settings from $CFG"
+echo "Linked Zed, Herdr, Claude, opencode, and Antigravity User settings from $CFG"
 echo "Skipped: Raycast (use raycast/config.json.example — contains secrets)"
 echo "Skipped: Cursor/VS Code (pick Cursor vs VS Code User path yourself; see .config/README.md)"
 echo "Herdr plugins: bash $CFG/herdr/install-plugins.sh"
+echo "Verify opencode: opencode debug config"

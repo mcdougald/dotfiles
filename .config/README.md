@@ -45,6 +45,26 @@ cp "$DOTFILES/.config/raycast/config.json.example" \
 # Edit config.json and paste tokens from Raycast → Settings → Advanced
 ```
 
+## opencode
+
+```bash
+mkdir -p ~/.config/opencode
+ln -sfn "$DOTFILES/.config/opencode/opencode.json" ~/.config/opencode/opencode.json
+ln -sfn "$DOTFILES/.config/opencode/tui.json"      ~/.config/opencode/tui.json
+ln -sfn "$DOTFILES/.config/opencode/AGENTS.md"     ~/.config/opencode/AGENTS.md
+ln -sfn "$DOTFILES/.config/opencode/agent"         ~/.config/opencode/agent
+ln -sfn "$DOTFILES/.config/opencode/command"       ~/.config/opencode/command
+```
+
+Runtime config (`opencode.json`) is split from TUI preferences (`tui.json`);
+both are JSONC and annotated inline. Bash permissions are an allowlist —
+read-only inspection and test runners run unattended, mutating git and network
+tools ask, `sudo` / force-push / pipe-to-shell are denied. Credentials live in
+`~/.local/share/opencode/auth.json`, not here.
+
+See `opencode/README.md` for the permission model, keybinds, and how to add
+agents and commands. Verify with `opencode debug config`.
+
 ## Claude Code (`~/.claude`)
 
 ```bash
@@ -52,7 +72,7 @@ mkdir -p ~/.claude
 ln -sfn "$DOTFILES/.config/claude/settings.json" ~/.claude/settings.json
 ```
 
-Project-level rules live in each repo’s `CLAUDE.md`. For a reusable template, see `agents/AGENTS.md`.
+Project-level rules live in each repo’s `CLAUDE.md`. For a reusable template, see `agents/AGENTS.md`; opencode also reads `CLAUDE.md` via its `instructions` setting, so one file covers both.
 
 ## Antigravity
 
@@ -88,10 +108,33 @@ See `iterm2/README.md` (color import + optional `AppSupport` symlink).
 
 Copy `agents/AGENTS.md` into a project root when you want shared agent instructions across tools.
 
+## CLI tooling
+
+Standard XDG locations — link the directory or the single file into
+`~/.config/<name>/`:
+
+| Path | Tool | Notes |
+| --- | --- | --- |
+| `starship.toml` | [Starship](https://starship.rs) | Prompt (alternative to the p10k config at repo root). |
+| `bat/config` | [bat](https://github.com/sharkdp/bat) | `cat` with syntax highlighting. |
+| `ripgrep/config` | [ripgrep](https://github.com/BurntSushi/ripgrep) | Point `RIPGREP_CONFIG_PATH` at it. |
+| `fd/ignore` | [fd](https://github.com/sharkdp/fd) | Global ignore patterns. |
+| `git/` | Git | `ignore` (global gitignore) + `include-delta.gitconfig` for [delta](https://github.com/dandavison/delta). |
+| `gh/` | [GitHub CLI](https://cli.github.com) | `config.yml` + `hosts.yml`; auth tokens are stored in the keychain, not here. |
+| `lazygit/config.yml` | [lazygit](https://github.com/jesseduffield/lazygit) | Git TUI. |
+| `helix/config.toml` | [Helix](https://helix-editor.com) | Modal editor. |
+| `zellij/` | [Zellij](https://zellij.dev) | `config.kdl` + `layouts/`. |
+| `mise/config.toml` | [mise](https://mise.jdx.dev) | Runtime/tool versions. |
+| `direnv/direnv.toml` | [direnv](https://direnv.net) | Per-directory environments. |
+| `ruff/ruff.toml` | [Ruff](https://docs.astral.sh/ruff/) | Python lint/format defaults. |
+| `taplo/taplo.toml` | [Taplo](https://taplo.tamasfe.dev) | TOML formatter. |
+
 ## One-shot macOS linker
 
 ```bash
 bash "$DOTFILES/.config/link-macos.sh"
 ```
 
-Review the script before running; it overwrites existing symlink targets for the same names.
+Links Zed, Herdr, Claude Code, opencode, and Antigravity. Review the script before
+running; it retargets existing symlinks and backs up real files it replaces
+(`<name>.backup-<timestamp>`).

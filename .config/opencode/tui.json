@@ -1,0 +1,42 @@
+{
+  // opencode TUI config — https://opencode.ai/docs/tui
+  // Linked to ~/.config/opencode/tui.json. Kept separate from opencode.json so
+  // terminal-only preferences never leak into headless/server runs.
+  "$schema": "https://opencode.ai/tui.json",
+
+  // "system" follows the terminal's light/dark mode. Browse with <leader>t.
+  "theme": "system",
+
+  // Leader is ctrl+x by default; these only fill in actions that ship unbound.
+  // Everything else keeps opencode's defaults — see README.md for the cheatsheet.
+  "keybinds": {
+    "session_fork": "<leader>f",
+    "tool_details": "<leader>d",
+    "display_thinking": "<leader>i",
+    "prompt_skills": "<leader>k",
+    "mcp_list": "<leader>p",
+    "scrollbar_toggle": "<leader>v"
+  },
+  "leader_timeout": 2000,
+
+  // Ping when a long run finishes or stops to ask something.
+  "attention": {
+    "enabled": true,
+    "notifications": true,
+    "sound": true,
+    "volume": 0.3
+  },
+
+  "diff_style": "auto",
+  "scroll_speed": 3,
+  "scroll_acceleration": { "enabled": true },
+  "cursor": {
+    "style": "block",
+    "blinking": true
+  },
+  "mouse": true,
+
+  "plugin": [
+    "oh-my-openagent@latest"
+  ]
+}

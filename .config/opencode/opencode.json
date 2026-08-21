@@ -1,0 +1,215 @@
+{
+  // opencode global config — https://opencode.ai/docs/config
+  // Linked to ~/.config/opencode/opencode.json (see .config/link-macos.sh).
+  // opencode parses JSONC, so comments and trailing commas are allowed here.
+  "$schema": "https://opencode.ai/config.json",
+
+  // ---------------------------------------------------------------- models --
+  // Pick the main model interactively with /models (it is remembered per
+  // project), or pin it here as "provider/model", e.g.:
+  //   "model": "anthropic/claude-opus-5",
+  //   "model": "openai/gpt-5.6-sol",
+  // small_model is only used for cheap background work (session titles,
+  // summaries) — keep it fast and cheap.
+  "small_model": "openai/gpt-5.4-mini",
+
+  // Subagents may not spawn their own subagents. Raise to 2 only if you
+  // deliberately want nested fan-out.
+  "subagent_depth": 1,
+
+  // ------------------------------------------------------------ instructions -
+  // AGENTS.md next to this file is picked up automatically as global
+  // instructions. These extra patterns pull in per-repo rules written for
+  // other tools so one set of conventions covers every agent.
+  "instructions": [
+    "CLAUDE.md",
+    ".cursor/rules/*.md",
+    ".github/copilot-instructions.md"
+  ],
+
+  // ------------------------------------------------------------- permissions -
+  // "last matching rule wins", so the catch-all goes first and the most
+  // specific rules go last. Read-only inspection runs unattended; anything
+  // that mutates history, leaves the machine, or escalates asks first.
+  "permission": {
+    "edit": "allow",
+    "external_directory": "ask",
+    "webfetch": "allow",
+    "websearch": "allow",
+    "bash": {
+      "*": "ask",
+
+      // inspection
+      "ls": "allow",
+      "ls *": "allow",
+      "pwd": "allow",
+      "cat *": "allow",
+      "bat *": "allow",
+      "head *": "allow",
+      "tail *": "allow",
+      "wc *": "allow",
+      "file *": "allow",
+      "stat *": "allow",
+      "which *": "allow",
+      "echo *": "allow",
+      "date": "allow",
+      "tree *": "allow",
+      "jq *": "allow",
+      "rg *": "allow",
+      "grep *": "allow",
+      "fd *": "allow",
+      "find *": "allow",
+      "diff *": "allow",
+
+      // git — read-only history and state
+      "git status": "allow",
+      "git status *": "allow",
+      "git diff *": "allow",
+      "git log *": "allow",
+      "git show *": "allow",
+      "git blame *": "allow",
+      "git branch": "allow",
+      "git branch *": "allow",
+      "git remote *": "allow",
+      "git stash list": "allow",
+      "git ls-files *": "allow",
+
+      // gh — read-only
+      "gh pr view *": "allow",
+      "gh pr list *": "allow",
+      "gh pr diff *": "allow",
+      "gh issue view *": "allow",
+      "gh issue list *": "allow",
+      "gh run view *": "allow",
+      "gh run list *": "allow",
+
+      // build / test / lint — safe to run unattended
+      "make *": "allow",
+      "just *": "allow",
+      "mise *": "allow",
+      "npm run *": "allow",
+      "npm test *": "allow",
+      "pnpm *": "allow",
+      "yarn *": "allow",
+      "bun run *": "allow",
+      "bun test *": "allow",
+      "cargo build *": "allow",
+      "cargo check *": "allow",
+      "cargo test *": "allow",
+      "cargo clippy *": "allow",
+      "cargo fmt *": "allow",
+      "go build *": "allow",
+      "go test *": "allow",
+      "go vet *": "allow",
+      "gofmt *": "allow",
+      "pytest *": "allow",
+      "uv run *": "allow",
+      "ruff *": "allow",
+      "tsc *": "allow",
+      "eslint *": "allow",
+      "prettier *": "allow",
+
+      // destructive or irreversible — always confirm
+      "git commit *": "ask",
+      "git push *": "ask",
+      "git reset --hard *": "ask",
+      "git clean *": "ask",
+      "git rebase *": "ask",
+      "gh pr create *": "ask",
+      "gh pr merge *": "ask",
+      "npm publish *": "ask",
+      "curl *": "ask",
+      "wget *": "ask",
+      "brew *": "ask",
+      "docker *": "ask",
+      "kubectl *": "ask",
+      "terraform *": "ask",
+
+      // never
+      "sudo *": "deny",
+      "rm -rf /*": "deny",
+      "rm -rf ~*": "deny",
+      "git push --force *": "deny",
+      "git push -f *": "deny",
+      "chmod 777 *": "deny",
+      "* | sh": "deny",
+      "* | bash": "deny"
+    }
+  },
+
+  // ----------------------------------------------------------------- agents --
+  // Built-in agents: build (full access), plan (read-only, asks to edit),
+  // general / explore / scout (subagents). Markdown agents live in ./agent.
+  "agent": {
+    "plan": {
+      "permission": {
+        "edit": "deny",
+        "bash": {
+          "*": "deny",
+          "ls *": "allow",
+          "cat *": "allow",
+          "rg *": "allow",
+          "fd *": "allow",
+          "git status *": "allow",
+          "git diff *": "allow",
+          "git log *": "allow"
+        }
+      }
+    }
+  },
+
+  // ------------------------------------------------------------- integration -
+  // Built-in LSP + formatters: better edits, and files come back formatted the
+  // way the repo expects instead of the way the model guessed.
+  "lsp": true,
+  "formatter": true,
+
+  // Snapshots back /undo and /redo — leave on.
+  "snapshot": true,
+
+  // Keep old tool output pruned so long sessions compact cleanly.
+  "compaction": {
+    "auto": true,
+    "prune": true
+  },
+
+  // Cap tool output; anything larger is written to disk and previewed.
+  "tool_output": {
+    "max_lines": 2000,
+    "max_bytes": 51200
+  },
+
+  // Do not burn cycles watching dependency and build trees.
+  "watcher": {
+    "ignore": [
+      "**/node_modules/**",
+      "**/.git/**",
+      "**/dist/**",
+      "**/build/**",
+      "**/target/**",
+      "**/.venv/**",
+      "**/__pycache__/**",
+      "**/.next/**"
+    ]
+  },
+
+  // --------------------------------------------------------------- behaviour -
+  "share": "manual",
+  "autoupdate": "notify",
+  "shell": "/bin/zsh",
+
+  // MCP servers. Keep tokens in the environment, never inline.
+  //   "mcp": {
+  //     "github": {
+  //       "type": "local",
+  //       "command": ["npx", "-y", "@modelcontextprotocol/server-github"],
+  //       "environment": { "GITHUB_TOKEN": "{env:GITHUB_TOKEN}" },
+  //       "enabled": true
+  //     }
+  //   }
+  "mcp": {},
+
+  "plugin": [
+    "oh-my-openagent@latest"
+  ]
+}
